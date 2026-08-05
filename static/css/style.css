@@ -1,0 +1,81 @@
+:root {
+  --hospital-blue: #0284c7;
+  --hospital-dark-blue: #0f172a;
+  --hospital-light-bg: #f8fafc;
+  --sidebar-width: 260px;
+  --risk-healthy: #10b981;
+  --risk-early: #f59e0b;
+  --risk-moderate: #f97316;
+  --risk-high: #ef4444;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--hospital-light-bg);
+  color: #334155;
+  margin: 0;
+}
+
+/* Sidebar Styling */
+.sidebar {
+  width: var(--sidebar-width);
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: var(--hospital-dark-blue);
+  color: #fff;
+  padding: 1.5rem 1rem;
+  z-index: 1000;
+}
+
+.sidebar .nav-link {
+  color: #94a3b8;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.sidebar .nav-link:hover, .sidebar .nav-link.active {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.main-content {
+  margin-left: var(--sidebar-width);
+  padding: 2rem;
+}
+
+/* Medical Cards */
+.card-ehr {
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1);
+  background: #ffffff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-ehr:hover {
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+/* Risk Badges */
+.badge-risk-Healthy { background-color: rgba(16, 185, 129, 0.15); color: var(--risk-healthy); }
+.badge-risk-Early { background-color: rgba(245, 158, 11, 0.15); color: var(--risk-early); }
+.badge-risk-Moderate { background-color: rgba(249, 115, 22, 0.15); color: var(--risk-moderate); }
+.badge-risk-High { background-color: rgba(239, 68, 68, 0.15); color: var(--risk-high); }
