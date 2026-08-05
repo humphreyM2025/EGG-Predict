@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3 class="fw-bold mb-3">AI Explainability & Feature Contribution (SHAP)</h3>
+<p class="text-muted">Breakdown of physiological metrics driving the Distilled Knowledge Model inference.</p>
+
+<div class="card card-ehr p-4 mb-4">
+  <h5 class="fw-bold mb-3">Feature Impact Summary</h5>
+  <div class="table-responsive">
+    <table class="table table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th>EGG Feature / Biomarker</th>
+          <th>SHAP Attribution Value</th>
+          <th>Impact Direction</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for feature, val in shap_data.items() %}
+        <tr>
+          <td class="fw-semibold">{{ feature }}</td>
+          <td><code>{{ val | round(4) }}</code></td>
+          <td>
+            {% if val > 0 %}
+              <span class="badge bg-danger"><i class="bi bi-arrow-up"></i> Increases Risk</span>
+            {% else %}
+              <span class="badge bg-success"><i class="bi bi-arrow-down"></i> Decreases Risk</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

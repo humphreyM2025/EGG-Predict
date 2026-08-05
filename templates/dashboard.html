@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h3 class="fw-bold m-0">Clinical Dashboard</h3>
+    <p class="text-muted small m-0">Real-time summary of AI-assisted EGG diagnostic evaluations</p>
+  </div>
+  <a href="{{ url_for('upload') }}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> New EGG Scan Analysis</a>
+</div>
+
+<!-- Animated Statistic Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card card-ehr p-3">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <span class="text-muted small fw-semibold">Total Patients</span>
+          <h2 class="fw-bold m-0">{{ total_patients }}</h2>
+        </div>
+        <div class="stat-icon bg-light-primary text-primary"><i class="bi bi-people"></i></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card card-ehr p-3">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <span class="text-muted small fw-semibold">Analyzed EGGs</span>
+          <h2 class="fw-bold m-0">{{ total_analyzed }}</h2>
+        </div>
+        <div class="stat-icon bg-light-info text-info"><i class="bi bi-activity"></i></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card card-ehr p-3">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <span class="text-muted small fw-semibold">Healthy Evaluated</span>
+          <h2 class="fw-bold text-success m-0">{{ healthy_cnt }}</h2>
+        </div>
+        <div class="stat-icon bg-light-success text-success"><i class="bi bi-check-circle"></i></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card card-ehr p-3">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <span class="text-muted small fw-semibold">High Risk Detected</span>
+          <h2 class="fw-bold text-danger m-0">{{ high_risk_cnt }}</h2>
+        </div>
+        <div class="stat-icon bg-light-danger text-danger"><i class="bi bi-exclamation-triangle"></i></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Predictions Table -->
+<div class="card card-ehr p-4">
+  <h5 class="fw-bold mb-3">Recent Patient Diagnostics</h5>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Patient</th>
+          <th>Hospital No.</th>
+          <th>Risk Category</th>
+          <th>AI Confidence</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for pred in recent_preds %}
+        <tr>
+          <td class="fw-semibold">{{ pred.patient.full_name }}</td>
+          <td><code>{{ pred.patient.hospital_number }}</code></td>
+          <td><span class="badge badge-risk-{{ pred.risk_level.split()[0] }}">{{ pred.risk_level }}</span></td>
+          <td>{{ (pred.confidence_score * 100) | round(1) }}%</td>
+          <td class="small text-muted">{{ pred.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+          <td>
+            <a href="{{ url_for('prediction_result', pred_id=pred.id) }}" class="btn btn-sm btn-outline-primary">View Report</a>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center text-muted">No patient evaluations recorded yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

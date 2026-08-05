@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h3 class="fw-bold m-0">Diagnostic Evaluation & EGG Signal Analysis</h3>
+    <span class="text-muted">Patient: {{ patient.full_name }} ({{ patient.hospital_number }})</span>
+  </div>
+  <div>
+    <a href="{{ url_for('explainability', pred_id=pred.id) }}" class="btn btn-outline-info"><i class="bi bi-diagram-3"></i> AI Explainability (SHAP)</a>
+    <button onclick="window.print()" class="btn btn-outline-secondary"><i class="bi bi-printer"></i> Print Medical Report</button>
+  </div>
+</div>
+
+<!-- Prediction Result Banner -->
+<div class="card card-ehr p-4 mb-4 border-start border-5 border-{{ 'success' if pred.risk_level=='Healthy' else 'danger' }}">
+  <div class="row align-items-center">
+    <div class="col-md-8">
+      <span class="text-uppercase small text-muted fw-semibold">AI Prediction Result</span>
+      <h2 class="fw-bold text-{{ 'success' if pred.risk_level=='Healthy' else 'danger' }}">{{ pred.risk_level }}</h2>
+      <p class="mb-0 text-dark"><strong>Clinical Recommendation:</strong> {{ pred.recommendation }}</p>
+    </div>
+    <div class="col-md-4 text-end">
+      <div class="display-5 fw-bold">{{ (pred.confidence_score * 100) | round(1) }}%</div>
+      <span class="text-muted">Student Model Confidence</span>
+    </div>
+  </div>
+</div>
+
+<!-- Interactive Signal Chart (Plotly) -->
+<div class="card card-ehr p-4 mb-4">
+  <h5 class="fw-bold mb-3"><i class="bi bi-wave-sine"></i> Interactive EGG Signal Breakdown</h5>
+  <div id="eggSignalPlot" style="height: 400px;"></div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Fix: Safely parse JSON string passed from Flask to avoid JS SyntaxError
+    var rawData = JSON.parse('{{ raw_signal | tojson | safe }}');
+    
+    // Ensure rawData is an array
+    if (typeof rawData === 'string') {
+      try { rawData = JSON.parse(rawData); } catch(e) {}
+    }
+
+    if (Array.isArray(rawData) && rawData.length > 0) {
+      var timeAxis = Array.from({length: rawData.length}, (_, i) => (i * 0.5)); // 2Hz sampling
+
+      var traceRaw = {
+        x: timeAxis,
+        y: rawData,
+        type: 'scatter',
+        mode: 'lines',
+        name: 'Filtered Gastric Signal',
+        line: {color: '#0284c7', width: 1.5}
+      };
+
+      var layout = {
+        xaxis: {title: 'Time (Seconds)'},
+        yaxis: {title: 'Amplitude (mV)'},
+        margin: {t: 20, r: 20, l: 40, b: 40}
+      };
+
+      Plotly.newPlot('eggSignalPlot', [traceRaw], layout);
+    } else {
+      document.getElementById('eggSignalPlot').innerHTML = 
+        '<div class="alert alert-warning text-center my-4">No signal data available for visualization.</div>';
+    }
+  });
+</script>
+{% endblock %}
